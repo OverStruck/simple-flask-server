@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: flask-simple-app
+  name: flask-simple-app
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flask-simple-app
+  template:
+    metadata:
+      labels:
+        app: flask-simple-app
+    spec:
+      # serviceAccountName: xxx
+      containers:
+      - image: <ACCOUNT-ID>.dkr.ecr.us-west-2.amazonaws.com/flask-simple-app
+        name: flask-simple-app-container
+        ports:
+        - containerPort: 7878
+        resources:
+          limits:
+            memory: 50Mi
+            cpu: 100m
+          requests:
+            cpu: 50m
+            memory: 20Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 7878
+          initialDelaySeconds: 5
+          periodSeconds: 5
